@@ -3,15 +3,25 @@ import type { Product } from "@/dataMocks/products.mock";
 import ProductCard from "./ProductCar";
 import FilterSidebar from "./FilterSideBar";
 import { Filter, Grid, List } from "lucide-react";
+import { useSearchParams } from "react-router";
+import { useState } from "react";
 
 interface Props {
   products: Product[];
 }
 
 export const ProductsGrid = ({ products }: Props) => {
-  {
-    /* Products Section */
-  }
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const viewMode = searchParams.get("viewMode") || "grid";
+
+  const handleViewModeChange = (mode: "grid" | "list") => {
+    searchParams.set("viewMode", mode);
+    setSearchParams(searchParams);
+  };
+
+  {/* Products Section */}
   return (
     <section className="py-12 px-4 lg:px-8">
       <div className="container mx-auto">
@@ -27,7 +37,7 @@ export const ProductsGrid = ({ products }: Props) => {
             <Button
               variant="outline"
               size="sm"
-              //   onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFilters(!showFilters)}
               className="lg:hidden"
             >
               <Filter className="h-4 w-4 mr-2" />
@@ -36,17 +46,17 @@ export const ProductsGrid = ({ products }: Props) => {
 
             <div className="hidden md:flex border rounded-md">
               <Button
-                // variant={viewMode === "grid" ? "default" : "ghost"}
+                variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
-                // onClick={() => setViewMode("grid")}
+                onClick={() => handleViewModeChange("grid")}
                 className="rounded-r-none"
               >
                 <Grid className="h-4 w-4" />
               </Button>
               <Button
-                // variant={viewMode === "list" ? "default" : "ghost"}
+                variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
-                // onClick={() => setViewMode("list")}
+                onClick={() => handleViewModeChange("list")}
                 className="rounded-l-none"
               >
                 <List className="h-4 w-4" />
@@ -62,7 +72,7 @@ export const ProductsGrid = ({ products }: Props) => {
           </div>
 
           {/* Mobile Filters */}
-          {/* {showFilters && (
+          {showFilters && (
             <div className="fixed inset-0 z-50 bg-background p-4 lg:hidden">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold">Filtros</h3>
@@ -76,17 +86,16 @@ export const ProductsGrid = ({ products }: Props) => {
               </div>
               <FilterSidebar />
             </div>
-          )} */}
+          )}
 
           {/* Products Grid */}
           <div className="flex-1">
             <div
-            /*className={
+              className={
                 viewMode === "grid"
                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                   : "space-y-4"
               }
-            */
             >
               {products.map((product) => (
                 <ProductCard
